@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Time Tracker</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+	<div class="container" id="tracker-app" style="display: none" :style="{display:'block'}">
+		<div class="row">
+			<div class="col py-5">
+				<h1 class="text-center mb-4">Time Tracker</h1>
+
+				<div class="modals">
+					<div class="modals__wrapper">
+
+						<div class="modals__item  task-adding" id="task-adding">
+							<div class="task-adding__wrapper">
+								<div class="modals__close" onclick="modalClose(event)">&times;</div>
+								<h2 class="text-center">Новый проект/задача</h2>
+								<form action="" @submit.prevent="addProject();" class="form pt-4">
+									
+									<div class="form-group">
+										<label>Название задачи/проекта</label>
+										<input type="text" ref="new_title" name="title" class="form-control mb-2" required placeholder="Сверстать лендинг" autocomplete="off">
+									</div>
+
+									<div class="form-group">
+										<label>Описание задачи/проекта</label>
+										<input type="text" ref="new_desc" name="desc" class="form-control mb-2" placeholder="Выполнить внезапно и очень быстро" autocomplete="off">
+									</div>
+									
+									<div class="form-group">
+										<label>Почасовая ставка</label>
+										<input type="number" ref="new_rate" value="400" name="rate" class="form-control" autocomplete="off">
+									</div>
+
+									<button class="btn btn-block btn-primary">Добавить задачу</button>
+								</form>
+							</div>
+						</div>
+
+						<div class="modals__item  task-adding" id="confirm-edit">
+							<div class="task-adding__wrapper">
+								<div class="modals__close" onclick="modalClose(event)">&times;</div>
+								<h2 class="text-center" ref="confirm_heading">Новый проект/задача</h2>
+								<form action="" @submit.prevent="action();" class="form">
+									<input type="hidden" ref="confirm_btn_stat">
+									<input type="hidden" ref="confirm_task_id">
+									
+									<div class="form-group">
+										<label ref="confirm_field_heading"></label>
+										<input type="text" ref="confirm_text_input" name="text" class="form-control mb-2" required autocomplete="off">
+									</div>
+
+									<button class="btn btn-block btn-primary" ref="confirm_btn_text">Добавьте комментарие</button>
+								</form>
+							</div>
+						</div>
+
+						<div class="modals__item  task-adding" id="confirm-remove">
+							<div class="task-adding__wrapper text-center">
+								<div class="modals__close" onclick="modalClose(event)">&times;</div>
+								<h2 class="text-center mb-3">Хотите удалить?</h2>
+								<p>Проект "<b ref="remove_task_title"></b>" будет удален навсегда.</p>
+								<form action="" @submit.prevent="remove();" class="form">
+									<input type="hidden" ref="task_id">
+									<button class="btn btn-block btn-outline-danger">Да, удалить</button>
+									<a href="javascript:void(0)" @click="modalClose();" class="btn btn-block btn-outline-success">Нет, оставить</a>
+								</form>
+							</div>
+						</div>
+						<div class="modals__bg" onclick="modalClose(event)"></div>
+					</div>
+				</div> <!-- /.modals -->
+
+				<div class="text-right mb-4 pb-2">
+					<button onclick="modalOpen(event, '#task-adding')" class="btn btn-outline-primary">Добавить задачу / проект</button>
+				</div>
+
+				<div class="alert p-relative" v-for="(task, task_id) in tasks" :class="'alert-'+task.status">
+
+					<div class="d-flex justify-content-between pb-3">
+						<div class="mr-3">
+							<i class="mr-2">{{statuses[task.status]}}</i>
+							<i>
+								<b v-if="task.paid">Оплачено</b>
+								<b class="text-danger" v-else>Не оплачено</b>
+							</i>
+						</div>
+						<span class="close" @click="removeConfirm(task_id)" data-toggle="tooltip" data-title="Удалить задачу">
+							<span>&times;</span>
+						</span>
+					</div>
+					
+					<h4 class="alert-heading pr-3">{{task.title}}</h4>
+					
+					<p class="m-0">{{task.desc}}</p>
+					
+					<div class="times pt-3 list-group hidden" :ref="'times_' + task_id" v-if="task.times.length">
+						
+						<div class="times pt-3 list-group">
+							<div	class="times-item list-group-item list-group-item-action"
+									v-for="(time, key) in task.times"
+									:class="{'active':task.times.length-1==key}"
+									>
+								<div class="d-flex w-100 justify-content-between">
+									<h5 class="mb-1">{{time.title||'Подзадача №' + (key+1)}}</h5>
+									<small>{{(getPassedTime((time.end||new Date().getTime()) - time.start))}}</small>
+								</div>
+								<p class="mb-0">{{time.comment}}</p>
+								<div v-if="task.times.length-1==key && task.status!='secondary' && task.status!='success'" class="pt-3">
+									<button @click="switchStatus(task_id, 'secondary')" class="btn btn-secondary">Поставить на паузу</button>
+									<button @click="switchStatus(task_id, 'success')" class="btn btn-success">Завершить</button>
+								</div>
+							</div>
+						</div>
+						
+						<div v-if="task.status != 'success'" class="pt-3 text-center">
+							<button @click="switchStatus(task_id, 'primary')" v-if="task.status != 'primary'" class="btn btn-primary">Продолжить</button>
+	
+							<button @click="switchStatus(task_id, 'secondary')" v-if="task.times.length && task.status != 'secondary'" class="btn btn-secondary">Поставить на паузу</button>
+							<button @click="switchStatus(task_id, 'success')" v-if=" task.status != 'light'" class="btn btn-success">Завершить</button>
+						</div>
+						<div v-if="task.status == 'success'" class="pt-3 text-right">
+							<button @click="switchStatus(task_id, 'primary')" class="btn btn-outline-primary">Вернуть в работу</button>
+							<button v-if="!task.paid" @click="task.paid=new Date().getTime();" class="btn btn-outline-success">Оплачено</button>
+							<button v-if="task.paid" @click="task.paid=0;" class="btn btn-outline-danger">Не оплачено</button>
+						</div>
+
+						<table class="table table-striped rounded mt-3">
+							<tr>
+								<th class="text-right">Почасовая ставка:</th>
+								<td class="pl-1">{{task.rate}}₽</td>
+							</tr>
+							<tr>
+								<th class="text-right">Потраченное время:</th>
+								<td class="pl-1">{{getProcessInfo(task).time}}</td>
+							</tr>
+							<tr>
+								<th class="text-right">Общая стоимость:</th>
+								<td class="pl-1">{{getProcessInfo(task).money}}₽</td>
+							</tr>
+							<tr>
+								<th class="text-right">Оплачено:</th>
+								<td class="pl-1" v-if="task.paid">{{getStringifyDate(task.paid)}}</td>
+								<td class="pl-1" v-else><i class="text-danger">Нет</i></td>
+							</tr>
+							<tr v-if="task.times.length">
+								<th class="text-right">Начало работы:</th>
+								<td class="pl-1">{{getStringifyDate(task.times[0].start)}}</td>
+							</tr>
+							<tr v-if="task.times.length && task.times[task.times.length-1].end">
+								<th class="text-right" v-if="task.status == 'success'">Завершено:</th>
+								<th class="text-right" v-else>Приостановлено:</th>
+								<td class="pl-1">{{getStringifyDate(task.times[task.times.length-1].end)}}</td>
+							</tr>
+						</table>
+					</div>
+					
+					<div class="pt-2" v-if="task.times.length">
+						<a href="javascript:void(0)"
+							@click="toggleTimes(event, 'times_' + task_id);"
+							class="link"
+							data-orgin-text="&equiv; Показать информацию"
+							data-replace-text="&times; Скрыть информацию"
+							>&times; Показать информацию</a>
+					</div>
+
+					<div class="pt-2" v-if="!task.times.length">
+						<button @click="switchStatus(task_id, 'primary')" class="btn btn-primary">Начать</button>
+					</div>
+				</div>
+
+				<div v-if="!tasks.length">
+					<div class="alert alert-info">
+				
+						<h4 class="alert-heading">Нет открытых задач</h4>
+						
+						<p class="m-0">
+							<a href="#" onclick="modalOpen(event, '#task-adding')">Добавьте задачу / проект</a>, чтобы контролировать время, трачимое на нее.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="scripts.js"></script>
+</body>
+</html>

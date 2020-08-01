@@ -1,0 +1,139 @@
+body {
+	background-color: #f3f3f3;
+}
+
+.hidden,
+.inviz {
+	display: none;
+}
+
+/* ********* modals ********* */
+.modals {
+	position: fixed;
+	z-index: 99999999999;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	opacity: 0;
+	visibility: hidden;
+	-webkit-transition: .3s;
+	transition: .3s;
+}
+  
+.modals.show {
+	opacity: 1;
+	visibility: visible;
+}
+  
+.modals__wrapper {
+	position: relative;
+	width: 100%;
+	min-height: 100%;
+	padding-top: 30px;
+	padding-bottom: 20px;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-box-pack: center;
+		-ms-flex-pack: center;
+			justify-content: center;
+	-webkit-box-align: center;
+		-ms-flex-align: center;
+			align-items: center;
+}
+  
+.modals__item {
+	position: absolute;
+	z-index: 1;
+	background-color: #fff;
+	padding: 30px 20px;
+	color: #000;
+	width: 100%;
+	max-width: 460px;
+	border-radius: 5px;
+	transform: translateY(-50%);
+	opacity: 0;
+	visibility: hidden;
+	-webkit-transition: .3s;
+	transition: .3s;
+}
+  
+.modals__item.show {
+	-webkit-transform: translateY(0%);
+			transform: translateY(0%);
+	opacity: 1;
+	visibility: visible;
+	position: relative;
+}
+  
+.modals__bg {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	min-height: 100%;
+	background-color: rgba(255, 255, 255, 0.7);
+	background-color: rgba(0, 0, 0, 0.7);
+	z-index: 0;
+}
+  
+.modals__close {
+	position: absolute;
+	right: 0;
+	top: 0;
+	cursor: pointer;
+	-webkit-transition: .3s;
+	transition: .3s;
+	color: #333;
+	padding: 2px 7px;
+}
+  
+.modals__close:hover {
+	color: #f00;
+}
+
+
+
+
+.close {
+	cursor: pointer;
+}
+
+[data-toggle="tooltip"] {
+	outline: 0;
+	position: relative;
+	z-index: 1;
+}
+[data-toggle="tooltip"]:after {
+	content: attr(data-title);
+	position: absolute;
+	bottom: 100%;
+	right: 0;
+
+	background-color: #1A1A1A;
+	color: #fff;
+	text-align: center;
+
+	width: 150px;
+
+	font-size: .8rem;
+	padding: 7px;
+	margin-bottom: 5px;
+	font-weight: normal;
+
+	border-radius: 4px;
+
+	opacity: 0;
+	visibility: hidden;
+
+	transition: .2s;
+	transform: translateY(-50%);
+}
+[data-toggle="tooltip"]:hover:after {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0%);
+}
