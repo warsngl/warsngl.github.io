@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-271c8c23"],{2208:function(t,n,e){},a57a:function(t,n,e){"use strict";e("2208")},f820:function(t,n,e){"use strict";e.r(n);var c=function(){var t=this,n=t.$createElement,e=t._self._c||n;return e("h1",[t._v("Copying HeartStone BattleGrounds without twist scripts...")])},s=[],u={},a=u,i=(e("a57a"),e("2877")),o=Object(i["a"])(a,c,s,!1,null,"336b853e",null);n["default"]=o.exports}}]);
+//# sourceMappingURL=chunk-271c8c23.793013f7.js.map
