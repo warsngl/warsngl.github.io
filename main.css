@@ -33,7 +33,7 @@ body {
     transform: rotate(360deg);
   }
 }
-h1,h2,h3{
+h1,h2,h3,h4{
   padding: 0;
   margin: 0;
   color: white;
@@ -43,9 +43,10 @@ h1,h2{
 }
 h3 {
   font-size: 28px;
-  
 }
-
+h4{
+  font-size: 20px;
+}
 .music {
   position: absolute;
   bottom: 5px;
@@ -201,4 +202,50 @@ h1 {
   backface-visibility: visible !important;
   -webkit-animation-name: flipInX;
   animation-name: flipInX;
+}
+.gallery-link{
+  color:white;
+}
+p{
+  color:white;
+  padding: 0;
+  margin: 0;
+  font-weight: 700;
+}
+.contacts, .why{
+  position: fixed;
+  font-weight: 700;
+  z-index: 30;
+}
+.contacts{
+  right:36px;
+  top:16px;
+}
+.why{
+  right:98px;
+  top:16px;
+}
+.seo-text{
+  color:white;
+  margin-left: 36px;
+  z-index: 30;
+  margin-top: -12%;
+}
+.seo-text h2{
+  margin-left: 16px;
+}
+.seo-text h1{
+  margin: 16px 0;
+}
+body::-webkit-scrollbar{
+  background-color: transparent;
+}
+body::-webkit-scrollbar-thumb{
+  background-color: rgba(128, 128, 128, 0.334);
+  border-radius: 10px;
+}
+.neptune{
+  color: rgb(0, 166, 255);
+  font-weight: 900;
+  text-shadow: 5px 5px 5px darkblue
 }
